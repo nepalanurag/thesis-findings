@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TCGA-BRCA results: benchmark and stability study</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <p class="kicker">M.S. Thesis &middot; Real-Data Validation</p>
+    <h1>Integrative Feature Selection for Multi-Modal Data via Permutation-Assisted Group Lasso</h1>
+    <p class="byline">Anurag Nepal &middot; San Francisco State University &middot; May 2026</p>
+  </div>
+</header>
+<nav class="pages">
+  <div class="wrap">
+    <a href="index.html">Key findings</a>
+    <a href="background.html">Background</a>
+    <a href="methods.html">Methods</a>
+    <a href="tcga-brca.html" class="here">TCGA-BRCA results</a>
+  </div>
+</nav>
+<main>
+<div class="wrap">
+
+<h2>1. Before the fix: the thesis method as written</h2>
+
+<p>Running the thesis pipeline as written on TCGA-BRCA (RNA only, 1,043 samples, 1,500 genes) gave a warning sign: held-out AUC was 0.974, but the selection missed every known ER driver (ESR1, PGR, FOXA1, GATA3 all at selection frequency 0), with no PAM50 or Oncotype DX enrichment. The diagnosis: the SKAT-based adaptive weights were invalid for continuous data (see <a href="methods.html">Methods</a>), and the lambda rule implied a false discovery rate around 0.65.</p>
+
+<table class="results">
+<tr><th></th><th class="num">Genes selected</th><th class="num">Held-out AUC</th><th>ESR1/PGR/FOXA1/GATA3</th><th>PAM50</th><th>Oncotype DX</th></tr>
+<tr><td>V1 (thesis as written)</td><td class="num">302</td><td class="num">0.974</td><td>all missed (freq 0)</td><td>none</td><td>none</td></tr>
+<tr class="winner"><td>V3 (fixed weights + FDR lambda)</td><td class="num">224</td><td class="num">0.954</td><td>all at freq 1.0</td><td>3.8x, p = 0.0003</td><td>5.0x, p = 0.012</td></tr>
+<tr><td>V3 standard weights (thesis correlation-rank)</td><td class="num">75</td><td class="num">0.926</td><td>all missed (freq &lt; 0.5)</td><td>none</td><td>none</td></tr>
+</table>
+
+<p>The fixed adaptive method recovers the ER program: top genes include PGR, GFRA1, STAC2, FABP7, ELF5, all ER-associated, and all four positive controls stay selected even at the stringent 0.9 cutoff (152 genes, PAM50 p = 0.0015, Oncotype DX p = 0.0038). The thesis's standard correlation-rank weights latch onto a tightly correlated but ER-irrelevant block (S100 genes) and miss the biology. Outcome-blind weighting is the wrong prior here.</p>
+
+<h2>2. Head-to-head benchmark: five arms</h2>
+
+<p>Adding methylation (n = 737 with both modalities), I compared five arms on the ER-IHC endpoint, 5 fresh train/test splits each. Hover the bars for stability and biology numbers.</p>
+
+<div class="figure">
+<div id="fivearm-plot"></div>
+<div class="caption">Held-out AUC by method. Error bars are one SD over 5 splits.</div>
+</div>
+
+<div class="figure">
+<div id="jaccard-plot"></div>
+<div class="caption">Selection stability for the same arms: mean pairwise Jaccard of the selected sets across the 5 splits.</div>
+</div>
+
+<table class="results">
+<tr><th>Arm</th><th class="num">Selected (SD)</th><th class="num">AUC (SD)</th><th class="num">Jaccard</th><th>PAM50 sig runs</th><th>Oncotype sig runs</th><th>Controls (of 5)</th></tr>
+<tr><td>Baseline LASSO</td><td class="num">30 (12)</td><td class="num">0.931 (0.017)</td><td class="num">0.201</td><td>2/5</td><td>4/5</td><td>ESR1 5/5; PGR 0/5; FOXA1 0/5; GATA3 2/5</td></tr>
+<tr><td>EF-Std</td><td class="num">23 (51)</td><td class="num">0.899 (0.000)</td><td class="num">0.600</td><td>0/5</td><td>0/5</td><td>all missed</td></tr>
+<tr class="winner"><td>EF-Adap</td><td class="num">236 (67)</td><td class="num">0.930 (0.017)</td><td class="num">0.229</td><td>5/5</td><td>4/5</td><td>ESR1 5/5; PGR 4/5; FOXA1 3/5; GATA3 3/5</td></tr>
+<tr><td>LF-Std</td><td class="num">107 (47)</td><td class="num">0.917 (0.018)</td><td class="num">0.363</td><td>0/5</td><td>0/5</td><td>nearly all missed</td></tr>
+<tr><td>LF-Adap</td><td class="num">498 (148)</td><td class="num">0.924 (0.015)</td><td class="num">0.327</td><td>5/5</td><td>2/5</td><td>ESR1 5/5; PGR 1/5; FOXA1 5/5; GATA3 5/5</td></tr>
+</table>
+
+<p>Read: the adaptive arms win on biology. Standard group lasso (EF-Std) is the most stable arm (Jaccard 0.600) yet selects nothing meaningful: all four positive controls missed, no signature enrichment. That is the trap this whole study is designed to avoid.</p>
+
+<h2>3. The stability study: S1 to S3</h2>
+
+<p>The adaptive models were accurate but unstable (EF-Adap Jaccard 0.229, LF-Adap 0.327). Within one fixed split the method is perfectly reproducible (Jaccard 1.00 across seeds), so the instability was genuine sampling variation. Three stabilization stages, consensus groups (S1), shrunk weights (S2), stability selection (S3), attack exactly that. Hover each bubble for the full numbers.</p>
+
+<div class="figure">
+<div id="bubble-plot"></div>
+<div class="caption">Prediction vs reproducibility for the adaptive fusion models, TCGA-BRCA ER-IHC endpoint (RNA + methylation, n = 737), 5 fresh train/test splits per arm. Bubble size is the mean number of selected features. Dashed lines trace each family's path: current to S1 (consensus groups) to S2 (shrunk weights) to S3 (stability selection). EF-Adap S3 was adopted: Jaccard 0.68, 123 features, AUC 0.948, controls all 5/5.</div>
+</div>
+
+<table class="results">
+<tr><th>Variant</th><th class="num">Selected (SD)</th><th class="num">AUC (SD)</th><th class="num">Jaccard</th><th>PAM50</th><th>Oncotype</th><th>Controls</th></tr>
+<tr><td>EF-Adap current</td><td class="num">236 (67)</td><td class="num">0.930 (0.017)</td><td class="num">0.229</td><td>5/5</td><td>4/5</td><td>ESR1 5/5; PGR 4/5; FOXA1 3/5; GATA3 3/5</td></tr>
+<tr><td>EF-Adap S1</td><td class="num">206.6 (35.2)</td><td class="num">0.940 (0.008)</td><td class="num">0.482</td><td>5/5</td><td>5/5</td><td>all 5/5</td></tr>
+<tr><td>EF-Adap S2</td><td class="num">206.2 (35.7)</td><td class="num">0.940 (0.008)</td><td class="num">0.483</td><td>5/5</td><td>5/5</td><td>all 5/5</td></tr>
+<tr class="winner"><td>EF-Adap S3</td><td class="num">122.8 (17.9)</td><td class="num">0.948 (0.006)</td><td class="num">0.680</td><td>5/5</td><td>5/5</td><td>all 5/5</td></tr>
+<tr><td>LF-Adap current</td><td class="num">498 (148)</td><td class="num">0.924 (0.015)</td><td class="num">0.327</td><td>5/5</td><td>2/5</td><td>ESR1 5/5; PGR 1/5; FOXA1 5/5; GATA3 5/5</td></tr>
+<tr><td>LF-Adap S1</td><td class="num">437.2 (40.5)</td><td class="num">0.946 (0.012)</td><td class="num">0.535</td><td>5/5</td><td>2/5</td><td>ESR1 5/5; PGR 5/5; FOXA1 4/5; GATA3 5/5</td></tr>
+<tr><td>LF-Adap S2</td><td class="num">427.8 (46.2)</td><td class="num">0.945 (0.013)</td><td class="num">0.557</td><td>5/5</td><td>2/5</td><td>ESR1 5/5; PGR 5/5; FOXA1 4/5; GATA3 5/5</td></tr>
+<tr><td>LF-Adap S3</td><td class="num">206.8 (26.1)</td><td class="num">0.944 (0.016)</td><td class="num">0.588</td><td>5/5</td><td>1/5</td><td>ESR1 2/5; PGR 1/5; FOXA1 2/5; GATA3 2/5</td></tr>
+</table>
+
+<div class="note">
+<strong>The late-fusion caution.</strong> LF-Adap S3 gains stability (Jaccard 0.588) but loses the positive controls in most splits. If I had optimized for stability alone, I would have picked a model that throws away the ER drivers. That is why every stage is judged on prediction, stability, and biology together.
+</div>
+
+<p>One more calibration: simple gene baselines predict ER status nearly as well (ESR1 alone: AUC 0.943; four-gene set: 0.939, over 10 splits). The paper's claim is therefore selection quality, stability plus biology, not prediction. Framing it that way is the honest read.</p>
+
+<h2>4. Secondary endpoint: PAM50 Basal-like vs rest</h2>
+
+<p>A consistency check only, since the labels come from the same RNA. The fixed pipeline selects 164 genes, held-out AUC 0.994, Jaccard 0.73. It recovers EGFR (frequency 1.0), keratins KRT6A/KRT16, and the luminal program (SCGB2A2, PIP, TFF1) as negative predictors. KRT5/KRT14 were correctly not selected: their univariate AUCs for these calls are only 0.77 and 0.66 in this dataset. The method follows the data, not the textbook.</p>
+
+</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    Anurag Nepal &middot; SFSU, 2026 &middot; <a href="https://github.com/nepalanurag/thesis-findings">github.com/nepalanurag/thesis-findings</a>
+  </div>
+</footer>
+<script src="plots.js"></script>
+</body>
+</html>

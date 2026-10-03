@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Background: why multi-modal feature selection is hard</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <p class="kicker">M.S. Thesis &middot; Real-Data Validation</p>
+    <h1>Integrative Feature Selection for Multi-Modal Data via Permutation-Assisted Group Lasso</h1>
+    <p class="byline">Anurag Nepal &middot; San Francisco State University &middot; May 2026</p>
+  </div>
+</header>
+<nav class="pages">
+  <div class="wrap">
+    <a href="index.html">Key findings</a>
+    <a href="background.html" class="here">Background</a>
+    <a href="methods.html">Methods</a>
+    <a href="tcga-brca.html">TCGA-BRCA results</a>
+  </div>
+</nav>
+<main>
+<div class="wrap">
+
+<h2>The problem</h2>
+
+<p>A modern cancer dataset measures several kinds of features per patient: RNA-seq expression for thousands of genes, DNA methylation at hundreds of thousands of CpG sites. A clinical label like ER status is one number. Feature selection means picking the small subset of features that predicts the label and means something biologically.</p>
+
+<p>This is hard for three reasons. First, features outnumber patients by a wide margin, so almost any method can find a combination that fits the training data. Second, features come in correlated groups (genes in the same pathway move together), and selecting one gene from a group at random gives a different answer on every data split. Third, modalities differ: expression and methylation have different scales, different noise, and different group structures.</p>
+
+<h2>The data: TCGA-BRCA</h2>
+
+<p>The thesis simulations are the controlled case study. The real-data case study is breast cancer from The Cancer Genome Atlas (TCGA-BRCA):</p>
+<ul class="tight">
+  <li><strong>RNA-seq</strong> (RSEM, via cBioPortal): primary tumors, one sample per patient, filtered to the 1,500 most variable genes in the RNA-only phase.</li>
+  <li><strong>Methylation</strong> (Illumina 450K, probe level for selection; probes map to genes only for interpretation).</li>
+  <li><strong>Endpoint:</strong> ER status by immunohistochemistry (IHC), 806 ER-positive and 237 ER-negative. This is an independent clinical label, not derived from the RNA, so it can honestly validate the selection.</li>
+  <li><strong>Combined cohort:</strong> n = 737 patients with both modalities.</li>
+  <li><strong>Design:</strong> 70/30 stratified train/test splits, all learned operations (variance filtering, scaling, grouping, weights, selection, lambda) inside the training set, held-out AUC on the test set.</li>
+</ul>
+
+<h2>What counts as ground truth</h2>
+
+<p>Prediction accuracy alone cannot tell you the selection is right: many wrong gene sets predict ER status well. So I used two independent biological yardsticks:</p>
+<ul class="tight">
+  <li><strong>Positive controls:</strong> ESR1, PGR, FOXA1, and GATA3 are the canonical ER-pathway transcription factors. A method that claims to find ER-related genes should find these.</li>
+  <li><strong>Signature enrichment:</strong> hypergeometric overlap tests against the PAM50 and Oncotype DX gene signatures. If the selected set is enriched for these independently defined signatures, it is finding real breast cancer biology, not noise.</li>
+</ul>
+
+<p>A secondary endpoint checks consistency, not validity: PAM50 Basal-like vs rest, where the labels themselves are derived from the same RNA, so that endpoint can only confirm the method behaves sensibly.</p>
+
+</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    Anurag Nepal &middot; SFSU, 2026 &middot; <a href="https://github.com/nepalanurag/thesis-findings">github.com/nepalanurag/thesis-findings</a>
+  </div>
+</footer>
+</body>
+</html>

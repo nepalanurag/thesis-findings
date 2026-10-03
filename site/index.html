@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Key Findings: Integrative Feature Selection via Permutation-Assisted Group Lasso</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <p class="kicker">M.S. Thesis &middot; Real-Data Validation</p>
+    <h1>Integrative Feature Selection for Multi-Modal Data via Permutation-Assisted Group Lasso</h1>
+    <p class="byline">Anurag Nepal &middot; San Francisco State University &middot; May 2026</p>
+  </div>
+</header>
+<nav class="pages">
+  <div class="wrap">
+    <a href="index.html" class="here">Key findings</a>
+    <a href="background.html">Background</a>
+    <a href="methods.html">Methods</a>
+    <a href="tcga-brca.html">TCGA-BRCA results</a>
+  </div>
+</nav>
+<main>
+<div class="wrap">
+
+<p>I wrote this thesis to answer a practical question: when you have thousands of gene expression and methylation measurements per patient, how do you pick the small set of features that actually matter, and how do you know they will show up again on new data? The thesis proposes a permutation-assisted group lasso, and I validated it on real TCGA breast cancer data.</p>
+
+<h2>The bottom line</h2>
+
+<div class="stat-grid">
+  <div class="stat">
+    <div class="num">0.680</div>
+    <div class="lbl">Selection stability (Jaccard) of the final model, up from 0.229</div>
+  </div>
+  <div class="stat">
+    <div class="num">0.948</div>
+    <div class="lbl">Held-out AUC predicting ER status (mean over 5 data splits)</div>
+  </div>
+  <div class="stat">
+    <div class="num">~123</div>
+    <div class="lbl">Features selected, down from 236, with better stability and accuracy</div>
+  </div>
+  <div class="stat">
+    <div class="num">5/5</div>
+    <div class="lbl">Splits in which the known ER drivers (ESR1, PGR, FOXA1, GATA3) were all recovered, and in which the PAM50 and Oncotype DX signatures were significantly enriched</div>
+  </div>
+</div>
+
+<h2>What I did</h2>
+<ul class="tight">
+  <li><strong>Built the method.</strong> Group lasso over correlated feature groups, with row-permuted "control" copies of each feature as decoys. A feature has to beat its own permuted decoys, repeatedly, to get selected. Early fusion (one joint model) and late fusion (per-modality models) variants, with adaptive penalty weights.</li>
+  <li><strong>Checked it in simulation.</strong> In the thesis pilot scenario (n=100, 200 noise features), fusion methods recovered true features far better than LASSO: Early Fusion F1 0.96 and sensitivity 0.93, versus LASSO F1 0.13 and sensitivity 0.10.</li>
+  <li><strong>Tried it on real TCGA-BRCA data, and found a bug in the thesis.</strong> The thesis used SKAT for the adaptive weights. SKAT is a rare-variant test built for genotype counts, and on continuous expression data it silently returned p=1 for every group, so the "adaptive" penalty carried no signal at all. I replaced it with univariate-signal weights and a false-discovery-rate targeted lambda rule, then kept everything else.</li>
+  <li><strong>Ran a head-to-head benchmark.</strong> On ER status by IHC (n=737, RNA-seq plus methylation, 5 fresh train/test splits per arm), the fixed adaptive models beat plain LASSO and standard non-adaptive group lasso on every biological measure.</li>
+  <li><strong>Fixed the stability problem.</strong> The adaptive models were accurate but unstable across data splits (Jaccard 0.23). Three stabilization stages, consensus groups, shrunk weights, and stability selection, took early-fusion adaptive to Jaccard 0.68 with AUC 0.948.</li>
+</ul>
+
+<div class="note">
+One honest lesson from this work: stability alone must not pick the winner. The late-fusion adaptive model also got more stable, but the stabilized version lost the known ER driver genes in most splits. I report that failure alongside the success, because it is the more instructive result.
+</div>
+
+<h2>Where to go next</h2>
+<ul class="tight">
+  <li><a href="background.html">Background</a>: the problem, the data, and what counts as ground truth.</li>
+  <li><a href="methods.html">Methods</a>: how permutation-assisted selection works, early vs late fusion, the SKAT correction, and the stabilization stages.</li>
+  <li><a href="tcga-brca.html">TCGA-BRCA results</a>: the benchmark numbers, the interactive prediction-vs-reproducibility plot, and the secondary endpoint.</li>
+</ul>
+
+<p>Analysis code and notes live in the <a href="https://github.com/nepalanurag/thesis-findings">GitHub repo</a>. The longer methods note is <a href="https://github.com/nepalanurag/thesis-findings/blob/main/REPORT.md">REPORT.md</a>.</p>
+
+</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    Anurag Nepal &middot; SFSU, 2026 &middot; <a href="https://github.com/nepalanurag/thesis-findings">github.com/nepalanurag/thesis-findings</a>
+  </div>
+</footer>
+</body>
+</html>

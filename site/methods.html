@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods: permutation-assisted group lasso</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <p class="kicker">M.S. Thesis &middot; Real-Data Validation</p>
+    <h1>Integrative Feature Selection for Multi-Modal Data via Permutation-Assisted Group Lasso</h1>
+    <p class="byline">Anurag Nepal &middot; San Francisco State University &middot; May 2026</p>
+  </div>
+</header>
+<nav class="pages">
+  <div class="wrap">
+    <a href="index.html">Key findings</a>
+    <a href="background.html">Background</a>
+    <a href="methods.html" class="here">Methods</a>
+    <a href="tcga-brca.html">TCGA-BRCA results</a>
+  </div>
+</nav>
+<main>
+<div class="wrap">
+
+<h2>Group lasso, briefly</h2>
+
+<p>Group lasso is the right tool here because genes travel in packs. A plain lasso picks one gene out of a correlated pathway and drops the rest, which makes the selected set jump around between data splits. Group lasso penalizes whole groups together, so a pathway enters or leaves as a unit. Groups come from hierarchical clustering of the feature correlation matrix. That choice is worth defending: it matches how the biology is organized, and it is what makes the selection stable enough to interpret.</p>
+
+<h2>The permutation assist</h2>
+
+<p>The thesis adds a decoy mechanism. For each feature, add a row-permuted copy of it, a "control" that keeps the marginal distribution but breaks the link to the outcome. Fit the group lasso on the doubled matrix, originals plus controls. A real feature that the model cannot distinguish from its own permuted decoy is not worth keeping.</p>
+
+<p>Two details matter:</p>
+<ul class="tight">
+  <li><strong>Lambda rule.</strong> Per permutation, pick the lambda that maximizes original discoveries subject to a false-discovery cap: (1 + number of controls selected) / max(1, number of originals selected) &le; 0.10. This is a knockoff-plus style rule, heuristic here, not a formal guarantee.</li>
+  <li><strong>Frequency cutoff.</strong> Repeat over permutations and keep features selected in at least half of them. The frequency is the selection statistic.</li>
+</ul>
+
+<h2>Early fusion vs late fusion</h2>
+
+<p>Early fusion stacks the modalities into one feature matrix before selection: one joint model. Late fusion runs the selection within each modality and combines afterwards. Early fusion lets the model trade off expression and methylation directly; late fusion is safer when one modality dominates. I ran both and compared honestly.</p>
+
+<h2>Standard vs adaptive weights</h2>
+
+<p>The thesis has two weighting schemes. Standard weights rank groups by internal correlation and are outcome-blind. Adaptive weights shrink the penalty for groups with strong univariate association to the outcome, so promising groups get selected more easily.</p>
+
+<div class="note">
+<strong>The SKAT correction.</strong> The thesis computed adaptive weights from SKAT p-values. SKAT is a rare-variant association test built for genotype counts of 0, 1, or 2. Fed standardized continuous expression values, SKAT either returned p = 1 through its SNP quality filter or crashed, and the thesis code mapped every failure to p = 1. That made the "adaptive" penalty purely size-proportional: it carried zero signal information, in the simulations and on real data. Worse, on real data the largest groups, which contain the real biology, got the largest penalties: the ESR1 group was penalized about 22 times more than a typical group. I replaced SKAT with the continuous-data analogue: per-group RMS of univariate logistic Wald z-statistics, w = sqrt(group size) / (1 + RMS z), normalized to mean 1. Everything reported on this site uses the fixed weights.
+</div>
+
+<h2>Stabilizing the selection</h2>
+
+<p>Even fixed, the adaptive models were accurate but unstable: mean pairwise Jaccard across data splits was 0.23, meaning two runs on different splits agreed on less than a quarter of the selected features. Three stages fixed most of that:</p>
+<ul class="tight">
+  <li><strong>S1, consensus groups.</strong> Compute bootstrap-averaged absolute Spearman correlations on the full cohort (unsupervised, no labels), cluster once, and fix those groups for all runs and permutations. This removes grouping jitter between runs.</li>
+  <li><strong>S2, shrunk weights.</strong> Soft-threshold the univariate z-statistics at |z| = 1 before building adaptive weights, so weak noisy signals stop shaking the group penalties.</li>
+  <li><strong>S3, stability selection.</strong> 30 complementary-pair subsamples, 15 inner permutations each with an inner vote cutoff of 0.4, keep features present in at least 60% of subsamples. This costs about 5 to 6 times the compute per run; S1 and S2 are free.</li>
+</ul>
+
+<p>Why this is the right fix: the diagnostic showed that within one fixed data split the model is perfectly reproducible (Jaccard 1.00 across seeds), so the instability was genuine sampling variation, not algorithmic jitter. Fixing the groups and hardening the weights attacks the real source.</p>
+
+</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    Anurag Nepal &middot; SFSU, 2026 &middot; <a href="https://github.com/nepalanurag/thesis-findings">github.com/nepalanurag/thesis-findings</a>
+  </div>
+</footer>
+</body>
+</html>
