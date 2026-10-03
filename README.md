@@ -22,4 +22,4 @@ When each patient is measured on thousands of gene expression and methylation fe
 
 - `site/` - the static website source
 - `REPORT.md` - the longer methods note: design, pipeline, the SKAT correction, full result tables, references
-- The underlying analysis scripts live in my private working directory; the report tables in `REPORT.md` reproduce their outputs exactly.
+- `code/` - the simulation engine (`main.r`) that produced the simulation results, with its own readme
