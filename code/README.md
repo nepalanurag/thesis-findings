@@ -21,3 +21,11 @@ These came from the analysis notebooks written alongside the thesis. Each is a p
 - `adaptive_permutation_group_lasso.R` — the core simulation study: multi-modal feature selection with adaptive permutation-assisted group lasso on simulated data with correlated features and a binary outcome (grpreg, decoy-based selection).
 - `tcga_brca_multimodal_selection.R` — the real-data counterpart: multi-modal feature selection on TCGA-BRCA (RNA-seq + methylation) using adaptive group lasso with inverse-log p-value penalties. Downloads the data via curatedTCGAData.
 - `thesis_simulation_data.R` — the simulation data generator used by the experiments: causal blocks, correlated features, and noise features.
+
+## Notebooks
+
+Each analysis script above has a companion R Markdown notebook in this folder that walks through the analysis as a story: background, setup, method, results, takeaway. Console chatter is suppressed and only curated results (tables and plots) are shown.
+
+- `adaptive_permutation_group_lasso.Rmd` — the simulation study comparing early/late fusion with standard and adaptive penalties against baseline lasso.
+- `tcga_brca_multimodal_selection.Rmd` — the TCGA-BRCA analysis: data loading, the three-way model comparison, and the subsample stability experiment.
+- `thesis_simulation_data.Rmd` — the survival simulation: data generator, then permutation-calibrated group lasso and lasso evaluated against the known causal features.
