@@ -1,0 +1,225 @@
+---
+title: "Simulating Survival Data for Feature Selection"
+subtitle: "A two-block simulation with known causal structure and a survival outcome"
+author: "Anurag Nepal"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: united
+    highlight: tango
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+## Background
+
+Before trusting a selection method on real data, I test it where I know the truth. I built a survival-outcome simulator with a known causal structure: one block of features carries the signal and another block is pure noise. The question this analysis answers: can a permutation-based rule find the penalty that recovers the signal block without dragging in noise features?
+
+## Setup
+
+The generator builds six latent uniform variables and expands each into ten correlated features, then pads out to the requested number of genes with pure noise. The survival outcome comes from the reda package's event simulator, with effect sizes placed on the first three latent variables. I generate two blocks: block 1 has 800 genes with real effects (0, -2, 3, -4), block 2 has 1200 genes with all-zero effects. Early fusion concatenates them into one dataset: 200 samples, 2000 features, one survival outcome. Everything downstream knows which features are causal, so every selection can be scored.
+
+## Method
+
+First, the packages.
+
+```{r libraries}
+library(tidyverse)
+library(knitr)
+library(reda)
+library(survival)
+library(grpreg)
+library(glmnet)
+```
+
+The data generator. Correlated features are noisy copies of their latent variable, with noise rising across the block. Noise features are uniform. The survival times and event indicators come from simEventData applied to the causal variables.
+
+```{r data-generator}
+create_simulation_data <- function(n_ss = 100, n_gene = 600, effect_sizes = c(0, -2, 3, -4),
+                                   n_x = rep(10, 6), sd_v = 0.3) {
+
+  # 1. Base causal variables, uniform
+  num_causal_vars <- length(effect_sizes) - 1
+  num_base_vars <- length(n_x)
+  base_vars <- matrix(runif(n_ss * num_base_vars), nrow = n_ss)
+  colnames(base_vars) <- paste0("x", 1:num_base_vars)
+
+  # 2. Correlated features: noisy copies of the base variables
+  correlated_features <- list()
+  for (i in 1:num_base_vars) {
+    v_i <- matrix(NA, nrow = n_ss, ncol = n_x[i])
+    for (j in 1:n_x[i]) {
+      noise <- rnorm(n = n_ss, mean = 0, sd = sd_v)
+      v_i[, j] <- base_vars[, i] + (0.01 + 0.5 * (j - 1) / (n_x[i] - 1)) * noise
+    }
+    colnames(v_i) <- paste0("v", i, "_", 1:n_x[i])
+    correlated_features[[i]] <- v_i
+  }
+  correlated_features <- do.call(cbind, correlated_features)
+
+  # 3. Uncorrelated noise features
+  num_noise_features <- n_gene - ncol(correlated_features)
+  if (num_noise_features < 0) {
+    stop("Total genes (n_gene) is smaller than the number of correlated features.")
+  }
+  noise_features <- matrix(runif(n_ss * num_noise_features), nrow = n_ss)
+  colnames(noise_features) <- paste0("w", 1:num_noise_features)
+
+  # 4. Survival outcome from the causal variables
+  causal_matrix <- cbind(rep(1, n_ss), base_vars[, 1:num_causal_vars])
+  sim_outcome <- simEventData(z = causal_matrix, zCoef = effect_sizes, recurrent = FALSE)
+
+  # 5. Final data frame
+  final_data <- as.data.frame(cbind(sim_outcome$time, sim_outcome$event, correlated_features, noise_features))
+  colnames(final_data)[1:2] <- c("time", "event")
+
+  return(final_data)
+}
+```
+
+Now I build the two blocks and fuse them. Block 1 carries the signal, block 2 is pure noise by construction (all effect sizes set to zero). Column prefixes mark each feature's origin.
+
+```{r build-blocks, results='hide'}
+set.seed(42)
+
+sample_size <- 200
+effect_coefficients <- c(0, -2, 3, -4) # intercept, then effects for x1, x2, x3
+
+block1 <- create_simulation_data(
+  n_ss = sample_size,
+  n_gene = 800,
+  effect_sizes = effect_coefficients
+)
+outcome_data <- block1[, c("time", "event")]
+block1_features <- block1[, -c(1, 2)]
+colnames(block1_features) <- paste0("B1_", colnames(block1_features))
+
+block2 <- create_simulation_data(
+  n_ss = sample_size,
+  n_gene = 1200,
+  effect_sizes = c(0, 0, 0, 0) # no effects: pure noise
+)
+block2_features <- block2[, -c(1, 2)]
+colnames(block2_features) <- paste0("B2_", colnames(block2_features))
+
+early_fusion_features <- cbind(block1_features, block2_features)
+early_fusion_data <- cbind(outcome_data, early_fusion_features)
+```
+
+```{r data-dims}
+dims_df <- data.frame(
+  Block = c("Block 1 (signal)", "Block 2 (noise)", "Early fusion"),
+  Samples = c(nrow(block1), nrow(block2), nrow(early_fusion_data)),
+  Features = c(ncol(block1_features), ncol(block2_features), ncol(early_fusion_features)),
+  Causal_Features = c("30 (B1_v1_ to B1_v3_)", "0", "30 (B1_v1_ to B1_v3_)")
+)
+knitr::kable(dims_df, caption = "Simulated data layout")
+```
+
+Experiment A: permutation-assisted group lasso for the Cox model. The idea is to learn the penalty from the null: shuffle the survival times 100 times to break every real association, and for each shuffled version record the largest lambda on the group lasso path (the lambda that kills everything). The median of those null lambdas is a penalty that noise alone is unlikely to survive. Then I fit once on the real data at that lambda.
+
+```{r grpsurv-permutation, results='hide'}
+group_index <- c(
+  rep(1, ncol(block1_features)), # signal block
+  rep(2, ncol(block2_features))  # noise block
+)
+
+surv_obj <- Surv(outcome_data$time, outcome_data$event)
+X_matrix <- as.matrix(early_fusion_features)
+
+n_permutations <- 100
+permuted_lambda_max <- numeric(n_permutations)
+
+for (i in 1:n_permutations) {
+  permuted_time <- sample(outcome_data$time)
+  permuted_surv_obj <- Surv(permuted_time, outcome_data$event)
+  fit_perm <- grpsurv(
+    X = X_matrix,
+    y = permuted_surv_obj,
+    group = group_index,
+    penalty = "grLasso",
+    nlambda = 3
+  )
+  permuted_lambda_max[i] <- fit_perm$lambda[1]
+}
+
+lambda_threshold <- median(permuted_lambda_max)
+
+final_perm_model <- grpsurv(
+  X = X_matrix,
+  y = surv_obj,
+  group = group_index,
+  penalty = "grLasso",
+  lambda = lambda_threshold
+)
+
+selected_groups <- predict(final_perm_model, type = "groups")
+n_nonzero <- sum(coef(final_perm_model) != 0)
+```
+
+Experiment B: the same permutation idea applied to plain lasso. Here I run cross-validated Cox lasso on 100 shuffled outcomes and take the 90th percentile of the null lambda.min values as a stringent penalty. Then I fit on the real data and score the picks against the known causal prefixes B1_v1_, B1_v2_ and B1_v3_.
+
+```{r lasso-permutation, results='hide'}
+X <- as.matrix(early_fusion_data[, -c(1, 2)])
+y <- Surv(early_fusion_data$time, early_fusion_data$event)
+
+n_permutations_b <- 100
+lambda_quantile <- 0.90
+permuted_lambda_mins <- numeric(n_permutations_b)
+
+for (i in 1:n_permutations_b) {
+  y_permuted <- y[sample(nrow(y)), ]
+  cv_fit_permuted <- cv.glmnet(X, y_permuted, family = "cox", alpha = 1)
+  permuted_lambda_mins[i] <- cv_fit_permuted$lambda.min
+}
+
+lambda_optimal <- quantile(permuted_lambda_mins, probs = lambda_quantile)
+
+final_model <- glmnet(X, y, family = "cox", alpha = 1)
+final_coeffs <- coef(final_model, s = lambda_optimal)
+selected_features_df <- as.data.frame(as.matrix(final_coeffs))
+selected_features_df <- selected_features_df[selected_features_df$s1 != 0, , drop = FALSE]
+selected_feature_names <- rownames(selected_features_df)
+
+true_causal_prefixes <- c("B1_v1_", "B1_v2_", "B1_v3_")
+selected_true_positives <- selected_feature_names[grepl(paste(true_causal_prefixes, collapse = "|"),
+                                                        selected_feature_names)]
+selected_false_positives <- setdiff(selected_feature_names, selected_true_positives)
+
+total_causal_features <- 3 * 10
+recall <- length(selected_true_positives) / total_causal_features
+```
+
+## Results
+
+Experiment A: the permutation-calibrated group lasso. The key question is whether it keeps the signal block and drops the noise block.
+
+```{r grpsurv-results}
+grpsurv_df <- data.frame(
+  Lambda_Threshold = round(lambda_threshold, 4),
+  Groups_Selected = paste(selected_groups, collapse = ", "),
+  Nonzero_Coefficients = n_nonzero
+)
+knitr::kable(grpsurv_df, caption = "Permutation-assisted group lasso (Cox): selection at the null-calibrated lambda")
+```
+
+Experiment B: the permutation-calibrated lasso, scored against the known causal features.
+
+```{r lasso-results}
+lasso_df <- data.frame(
+  Lambda_90th_Pct = round(as.numeric(lambda_optimal), 4),
+  True_Positives = length(selected_true_positives),
+  False_Positives = length(selected_false_positives),
+  Recall = paste0(round(100 * recall, 1), "% (",
+                  length(selected_true_positives), " of ", total_causal_features, ")")
+)
+knitr::kable(lasso_df, caption = "Permutation-assisted lasso (Cox): recovery of the 30 known causal features")
+```
+
+## Takeaway
+
+Both experiments test the same principle: let the null distribution set the penalty instead of guessing it. If the calibrated lambdas recover the B1 causal features while leaving the B2 noise block alone, the permutation rule is doing its job. Because the causal structure is fixed by construction here, these tables are a direct read on whether the method can tell signal from noise before it meets real data.
