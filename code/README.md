@@ -13,3 +13,11 @@ What it does, in order:
 Packages used: tidyverse, glmnet, grpreg, pROC, SKAT, Matrix, doParallel, foreach. Needs R with those packages installed; the loop is the slow part and uses all but one CPU core.
 
 This is the code that produced the simulation numbers in the thesis README (Early Fusion F1 0.96 vs LASSO F1 0.13 in the pilot scenario).
+
+## Analysis scripts
+
+These came from the analysis notebooks written alongside the thesis. Each is a plain R script with the notebook's code chunks in order:
+
+- `adaptive_permutation_group_lasso.R` — the core simulation study: multi-modal feature selection with adaptive permutation-assisted group lasso on simulated data with correlated features and a binary outcome (grpreg, decoy-based selection).
+- `tcga_brca_multimodal_selection.R` — the real-data counterpart: multi-modal feature selection on TCGA-BRCA (RNA-seq + methylation) using adaptive group lasso with inverse-log p-value penalties. Downloads the data via curatedTCGAData.
+- `thesis_simulation_data.R` — the simulation data generator used by the experiments: causal blocks, correlated features, and noise features.
