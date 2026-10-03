@@ -2,6 +2,10 @@
 
 This repo presents my M.S. thesis, "Integrative Feature Selection for Multi-Modal Data via Permutation-Assisted Group Lasso" (Anurag Nepal, San Francisco State University, May 2026), plus the real-data validation and stability studies I ran after defending.
 
+## Live demo
+
+The site is live: https://anurag-thesis.vercel.app/
+
 ## What the thesis is about
 
 When each patient is measured on thousands of gene expression and methylation features, which small set of features actually matters? The thesis proposes a group lasso with a decoy mechanism: for every feature, add a row-permuted copy of it as a "control." A feature has to beat its own permuted decoys, repeatedly across permutations, to get selected. Early fusion stacks modalities into one joint model; late fusion selects within each modality. Adaptive penalty weights shrink for groups with strong univariate signal.
