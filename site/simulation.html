@@ -40,8 +40,8 @@
 <table class="results">
 <tr><th>Method</th><th class="num">FDR</th><th class="num">Sensitivity</th><th class="num">F1</th><th class="num">Stability (Jaccard)</th></tr>
 <tr><td>Baseline LASSO</td><td class="num">0.526</td><td class="num">0.159</td><td class="num">&mdash;</td><td class="num">0.058</td></tr>
-<tr><td>Early fusion, standard</td><td class="num">0.72</td><td class="num">high</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
-<tr><td>Late fusion, standard</td><td class="num">0.81</td><td class="num">high</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+<tr><td>Early fusion, standard</td><td class="num">0.72</td><td class="num">high</td><td class="num">&mdash;</td><td class="num">0.24</td></tr>
+<tr><td>Late fusion, standard</td><td class="num">0.81</td><td class="num">high</td><td class="num">&mdash;</td><td class="num">0.33</td></tr>
 <tr><td>Late fusion, adaptive</td><td class="num">0.387</td><td class="num">0.85</td><td class="num">0.674</td><td class="num">0.389</td></tr>
 <tr class="winner"><td>Early fusion, adaptive</td><td class="num">0.01</td><td class="num">0.67</td><td class="num">0.787</td><td class="num">0.59</td></tr>
 </table>
@@ -49,6 +49,11 @@
 <div class="figure">
 <div id="sim-fdr-plot"></div>
 <div class="caption">False discovery rate by method, averaged over all 18 simulation scenarios (50 runs each). Lower is better.</div>
+</div>
+
+<div class="figure">
+<div id="sim-jac-plot"></div>
+<div class="caption">Selection stability by method: mean pairwise Jaccard of the selected sets across runs. Higher is better.</div>
 </div>
 
 <p>The adaptive weights did their job. Early fusion with adaptive weights held the false discovery rate to 0.01 while recovering two-thirds of the true signals, giving the best F1 (0.787) and the best selection stability (Jaccard 0.59) with a parsimonious set of about 30 features. Late fusion with adaptive weights was the most sensitive method (0.85, perfect recovery of the strongest block) but admitted far more noise (FDR 0.387), which dragged its F1 to 0.674.</p>
