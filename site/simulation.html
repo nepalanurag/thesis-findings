@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulation study: the thesis method on known truth</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <p class="kicker">M.S. Thesis &middot; Simulation Study</p>
+    <h1>Integrative Feature Selection for Multi-Modal Data via Permutation-Assisted Group Lasso</h1>
+    <p class="byline">Anurag Nepal &middot; San Francisco State University &middot; May 2026</p>
+  </div>
+</header>
+<nav class="pages">
+  <div class="wrap">
+    <a href="index.html">Key findings</a>
+    <a href="background.html">Background</a>
+    <a href="methods.html">Methods</a>
+    <a href="simulation.html" class="here">Simulation study</a>
+    <a href="tcga-brca.html">TCGA-BRCA results</a>
+  </div>
+</nav>
+<main>
+<div class="wrap">
+
+<h2>1. Background</h2>
+
+<p>This is the simulation study the thesis was built on, run from <a href="https://github.com/nepalanurag/thesis-findings/blob/main/code/adaptive_permutation_group_lasso.Rmd">the thesis notebook</a> (one line fixed: a vector was being indexed with <code>$final_selection</code>). The idea is simple: when the truth is known, you can check whether the method finds it.</p>
+
+<p>One thing to read first: this notebook runs the thesis's <strong>original</strong> adaptive weights, the SKAT-p-value version documented on the <a href="methods.html">Methods</a> page as invalid for standardized continuous expression data. The SKAT p-values collapsed to 1 for nearly every group, so the "adaptive" penalty carried no signal information, it was purely size-proportional. Everything on the TCGA-BRCA page uses the fixed shrunk-Wald-z weights. What follows is what the original version did, which turns out to be a clean demonstration of why the fix was needed.</p>
+
+<h2>2. Setup</h2>
+
+<p>One scenario: n = 100 samples, a binary outcome drawn from a logistic model on three latent variables. Each latent variable generates a block of 10 correlated features (30 true causal features total), plus 200 noise features. Five independent runs; within each run, 25 permutations of a decoy-based lambda selection, keeping features selected in at least half the permutations. Five methods compared: baseline lasso, early fusion (one joint group-lasso model) and late fusion (per-modality models, combined picks), each with standard correlation-rank penalties and with the original SKAT-based adaptive penalties.</p>
+
+<h2>3. Results</h2>
+
+<p>Mean (SD) over 5 runs. Truth: 30 causal features.</p>
+
+<table class="results">
+<tr><th>Method</th><th class="num">F1</th><th class="num">Sensitivity</th><th class="num">FDR</th><th class="num">AUC</th><th class="num">Features selected</th></tr>
+<tr><td>Baseline LASSO</td><td class="num">0.13 (0.10)</td><td class="num">0.10 (0.09)</td><td class="num">0.63 (0.38)</td><td class="num">0.93 (0.09)</td><td class="num">14.2 (9.6)</td></tr>
+<tr class="winner"><td>Early fusion, standard</td><td class="num">0.96 (0.09)</td><td class="num">0.93 (0.15)</td><td class="num">0.00 (0.00)</td><td class="num">0.73 (0.14)</td><td class="num">28.0 (4.5)</td></tr>
+<tr><td>Early fusion, adaptive (original SKAT weights)</td><td class="num">0.40 (0.21)</td><td class="num">0.67 (0.33)</td><td class="num">0.71 (0.16)</td><td class="num">0.90 (0.08)</td><td class="num">73.6 (28.0)</td></tr>
+<tr><td>Late fusion, standard</td><td class="num">0.77 (0.19)</td><td class="num">0.93 (0.15)</td><td class="num">0.33 (0.22)</td><td class="num">0.82 (0.04)</td><td class="num">43.8 (8.5)</td></tr>
+<tr><td>Late fusion, adaptive (original SKAT weights)</td><td class="num">0.35 (0.23)</td><td class="num">0.67 (0.47)</td><td class="num">0.76 (0.15)</td><td class="num">0.86 (0.06)</td><td class="num">82.0 (32.4)</td></tr>
+</table>
+
+<div class="figure">
+<div id="sim-f1-plot"></div>
+<div class="caption">Selection quality by method: F1 against the known 30 causal features, mean and one SD over 5 runs.</div>
+</div>
+
+<p>The adaptive rows did <strong>not</strong> win. With the original SKAT weights they selected 70 to 80 features with false discovery rates around 0.7: the weights carried no signal, so "adaptive" meant almost unpenalized noise groups getting in. This is exactly the failure mode the <a href="methods.html">Methods</a> page diagnoses, reproduced here on known truth before it ever touched real data.</p>
+
+<p>Two cleaner results did hold. Standard group lasso on the joint model nearly perfectly recovered the truth (F1 0.96, zero false discoveries, 28 of 30 features), and early fusion beat late fusion for the standard penalty (F1 0.96 vs 0.77). Note the AUC column: baseline lasso predicts well (AUC 0.93) while selecting almost nothing real (sensitivity 0.10), and the best-selecting method has the lowest AUC. Prediction and selection are different jobs; this study scores selection.</p>
+
+<div class="note">
+<strong>Caveats.</strong> Five runs is small, so the standard deviations are wide and any single row could shift with more runs. The adaptive rows reflect the original flawed weights only; they say nothing about the fixed shrunk-Wald-z weights used on the real-data pages.
+</div>
+
+<h2>4. Takeaway</h2>
+
+<p>The simulation did its job: it showed that the thesis's original adaptive weighting failed on known truth, selecting mostly noise. That failure is what motivated the SKAT correction. The standard-penalty results also established the baseline the method had to beat: a joint early-fusion group lasso that finds 28 of 30 true features with no false discoveries. Everything reported on the <a href="tcga-brca.html">TCGA-BRCA page</a> is judged against that bar, using the fixed weights.</p>
+
+</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    Anurag Nepal &middot; SFSU, 2026 &middot; <a href="https://github.com/nepalanurag/thesis-findings">github.com/nepalanurag/thesis-findings</a>
+  </div>
+</footer>
+<script src="simulation-plots.js"></script>
+</body>
+</html>

@@ -389,7 +389,7 @@ for (n_val in param_n_samples) {
           data.frame(Model = "Early Fusion (Std)", AUC = auc_early_std, calculate_metrics(res_early_std$final_selection, true_signal_features)),
           data.frame(Model = "Early Fusion (Adap)", AUC = auc_early_adp, calculate_metrics(res_early_adp$final_selection, true_signal_features)),
           data.frame(Model = "Late Fusion (Std)", AUC = auc_late_std, calculate_metrics(sel_late_std, true_signal_features)),
-          data.frame(Model = "Late Fusion (Adap)", AUC = auc_late_adp, calculate_metrics(sel_late_adp$final_selection, true_signal_features)),
+          data.frame(Model = "Late Fusion (Adap)", AUC = auc_late_adp, calculate_metrics(sel_late_adp, true_signal_features)),
           data.frame(Model = "Baseline LASSO", AUC = auc_lasso, calculate_metrics(sel_lasso, true_signal_features))
         )
       }
