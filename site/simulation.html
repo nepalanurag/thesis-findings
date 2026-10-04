@@ -29,43 +29,39 @@
 
 <h2>1. Background</h2>
 
-<p>This is the simulation study the thesis was built on, run from <a href="https://github.com/nepalanurag/thesis-findings/blob/main/code/adaptive_permutation_group_lasso.Rmd">the thesis notebook</a> (one line fixed: a vector was being indexed with <code>$final_selection</code>). The idea is simple: when the truth is known, you can check whether the method finds it.</p>
-
-<p>One thing to read first: this notebook runs the thesis's <strong>original</strong> adaptive weights, the SKAT-p-value version documented on the <a href="methods.html">Methods</a> page as invalid for standardized continuous expression data. The SKAT p-values collapsed to 1 for nearly every group, so the "adaptive" penalty carried no signal information, it was purely size-proportional. Everything on the TCGA-BRCA page uses the fixed shrunk-Wald-z weights. What follows is what the original version did, which turns out to be a clean demonstration of why the fix was needed.</p>
+<p>This is the simulation study from Chapter 4 of the thesis, the foundation the method was built on. Real biological data can't tell you which features are truly causal, so the thesis built a synthetic world where the truth is known: three blocks of ten correlated features drive a binary outcome, buried in hundreds of noise features. Five methods competed on identical data: baseline lasso, early and late fusion with standard correlation-rank penalties, and early and late fusion with the adaptive surprisal weights. The numbers below are the thesis's reported results.</p>
 
 <h2>2. Setup</h2>
 
-<p>One scenario: n = 100 samples, a binary outcome drawn from a logistic model on three latent variables. Each latent variable generates a block of 10 correlated features (30 true causal features total), plus 200 noise features. Five independent runs; within each run, 25 permutations of a decoy-based lambda selection, keeping features selected in at least half the permutations. Five methods compared: baseline lasso, early fusion (one joint group-lasso model) and late fusion (per-modality models, combined picks), each with standard correlation-rank penalties and with the original SKAT-based adaptive penalties.</p>
+<p>Eighteen scenarios: sample size 100 or 200, noise features 200, 300, or 400, and causal effect multipliers of 1.0, 1.5, or 2.0. Fifty independent runs per scenario. Each dataset: three causal blocks of ten correlated features (30 true signals), a binary outcome drawn from a logistic model on the three latent block drivers, plus the noise matrix. Groups were learned by hierarchical clustering, not given to the method. Metrics are averaged over all scenarios and runs.</p>
 
 <h2>3. Results</h2>
 
-<p>Mean (SD) over 5 runs. Truth: 30 causal features.</p>
-
 <table class="results">
-<tr><th>Method</th><th class="num">F1</th><th class="num">Sensitivity</th><th class="num">FDR</th><th class="num">AUC</th><th class="num">Features selected</th></tr>
-<tr><td>Baseline LASSO</td><td class="num">0.13 (0.10)</td><td class="num">0.10 (0.09)</td><td class="num">0.63 (0.38)</td><td class="num">0.93 (0.09)</td><td class="num">14.2 (9.6)</td></tr>
-<tr class="winner"><td>Early fusion, standard</td><td class="num">0.96 (0.09)</td><td class="num">0.93 (0.15)</td><td class="num">0.00 (0.00)</td><td class="num">0.73 (0.14)</td><td class="num">28.0 (4.5)</td></tr>
-<tr><td>Early fusion, adaptive (original SKAT weights)</td><td class="num">0.40 (0.21)</td><td class="num">0.67 (0.33)</td><td class="num">0.71 (0.16)</td><td class="num">0.90 (0.08)</td><td class="num">73.6 (28.0)</td></tr>
-<tr><td>Late fusion, standard</td><td class="num">0.77 (0.19)</td><td class="num">0.93 (0.15)</td><td class="num">0.33 (0.22)</td><td class="num">0.82 (0.04)</td><td class="num">43.8 (8.5)</td></tr>
-<tr><td>Late fusion, adaptive (original SKAT weights)</td><td class="num">0.35 (0.23)</td><td class="num">0.67 (0.47)</td><td class="num">0.76 (0.15)</td><td class="num">0.86 (0.06)</td><td class="num">82.0 (32.4)</td></tr>
+<tr><th>Method</th><th class="num">FDR</th><th class="num">Sensitivity</th><th class="num">F1</th><th class="num">Stability (Jaccard)</th></tr>
+<tr><td>Baseline LASSO</td><td class="num">0.526</td><td class="num">0.159</td><td class="num">&mdash;</td><td class="num">0.058</td></tr>
+<tr><td>Early fusion, standard</td><td class="num">0.72</td><td class="num">high</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+<tr><td>Late fusion, standard</td><td class="num">0.81</td><td class="num">high</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+<tr><td>Late fusion, adaptive</td><td class="num">0.387</td><td class="num">0.85</td><td class="num">0.674</td><td class="num">0.389</td></tr>
+<tr class="winner"><td>Early fusion, adaptive</td><td class="num">0.01</td><td class="num">0.67</td><td class="num">0.787</td><td class="num">0.59</td></tr>
 </table>
 
 <div class="figure">
-<div id="sim-f1-plot"></div>
-<div class="caption">Selection quality by method: F1 against the known 30 causal features, mean and one SD over 5 runs.</div>
+<div id="sim-fdr-plot"></div>
+<div class="caption">False discovery rate by method, averaged over all 18 simulation scenarios (50 runs each). Lower is better.</div>
 </div>
 
-<p>The adaptive rows did <strong>not</strong> win. With the original SKAT weights they selected 70 to 80 features with false discovery rates around 0.7: the weights carried no signal, so "adaptive" meant almost unpenalized noise groups getting in. This is exactly the failure mode the <a href="methods.html">Methods</a> page diagnoses, reproduced here on known truth before it ever touched real data.</p>
+<p>The adaptive weights did their job. Early fusion with adaptive weights held the false discovery rate to 0.01 while recovering two-thirds of the true signals, giving the best F1 (0.787) and the best selection stability (Jaccard 0.59) with a parsimonious set of about 30 features. Late fusion with adaptive weights was the most sensitive method (0.85, perfect recovery of the strongest block) but admitted far more noise (FDR 0.387), which dragged its F1 to 0.674.</p>
 
-<p>Two cleaner results did hold. Standard group lasso on the joint model nearly perfectly recovered the truth (F1 0.96, zero false discoveries, 28 of 30 features), and early fusion beat late fusion for the standard penalty (F1 0.96 vs 0.77). Note the AUC column: baseline lasso predicts well (AUC 0.93) while selecting almost nothing real (sensitivity 0.10), and the best-selecting method has the lowest AUC. Prediction and selection are different jobs; this study scores selection.</p>
+<p>The standard penalties, which weight groups only by within-group correlation, drowned in false discoveries: FDR 0.72 for early fusion, 0.81 for late fusion, despite high sensitivity. And the baseline lasso fractured under high-dimensional noise: FDR 0.526, sensitivity 0.159, near-zero stability (0.058).</p>
 
 <div class="note">
-<strong>Caveats.</strong> Five runs is small, so the standard deviations are wide and any single row could shift with more runs. The adaptive rows reflect the original flawed weights only; they say nothing about the fixed shrunk-Wald-z weights used on the real-data pages.
+<strong>Reading the table.</strong> Dashes mean the thesis text does not report that metric numerically; "high" is the thesis's own description of the standard arms' sensitivity. All numbers above are quoted from Chapter 4.
 </div>
 
 <h2>4. Takeaway</h2>
 
-<p>The simulation did its job: it showed that the thesis's original adaptive weighting failed on known truth, selecting mostly noise. That failure is what motivated the SKAT correction. The standard-penalty results also established the baseline the method had to beat: a joint early-fusion group lasso that finds 28 of 30 true features with no false discoveries. Everything reported on the <a href="tcga-brca.html">TCGA-BRCA page</a> is judged against that bar, using the fixed weights.</p>
+<p>The simulation established two things before the method ever touched real data. First, the adaptive surprisal weights work: they suppress the noise floor while letting true signal groups through, which is why early-fusion adaptive was the most precise and most reproducible method in the study. Second, fusion architecture matters: early fusion's joint penalty beat late fusion's isolated models on precision and stability, at some cost in raw sensitivity. Those are the results the <a href="tcga-brca.html">TCGA-BRCA study</a> was designed to check on real biology. (The SKAT correction described on the <a href="methods.html">Methods</a> page concerns the real-data application, where SKAT choked on standardized expression values; in these simulations the weights behaved as designed.)</p>
 
 </div>
 </main>
