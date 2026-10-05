@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reproducibility: the frozen analysis scripts</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <p class="kicker">M.S. Thesis &middot; Real-Data Validation</p>
+    <h1>Integrative Feature Selection for Multi-Modal Data via Permutation-Assisted Group Lasso</h1>
+    <p class="byline">Anurag Nepal &middot; San Francisco State University &middot; May 2026</p>
+  </div>
+</header>
+<nav class="pages">
+  <div class="wrap">
+    <a href="index.html">Key findings</a>
+    <a href="background.html">Background</a>
+    <a href="methods.html">Methods</a>
+    <a href="simulation.html">Simulation study</a>
+    <a href="tcga-brca.html">TCGA-BRCA results</a>
+    <a href="reproducibility.html" class="here">Reproducibility</a>
+  </div>
+</nav>
+<main>
+<div class="wrap">
+
+<p>Every number on this site traces back to a published script. The exact R scripts that produced the reported tables are frozen in the repo as they were run in September 2026, with a manifest mapping each table to its script, seed, and console log: <code>code/frozen_tcga/</code> on <a href="https://github.com/nepalanurag/thesis-findings">GitHub</a>.</p>
+
+<h2>Which script made which table</h2>
+
+<table class="results">
+<tr><th>Results section</th><th>Script</th><th>Seed scheme</th></tr>
+<tr><td>As-written vs fixed (RNA only)</td><td><code>tcga-brca-real.R</code> (V1), <code>tcga-brca-v3.R</code> (V3 adaptive + standard)</td><td class="num">20260908 / 20260909</td></tr>
+<tr><td>Five-arm benchmark (5 splits)</td><td><code>tcga-brca-5arm.R</code> (run once per split), <code>aggregate-5arm.R</code></td><td class="num">20260909 + run id</td></tr>
+<tr><td>Stability study (S1 to S3)</td><td><code>stability_lib.R</code>, <code>stability_ef.R</code>, <code>stability_lf.R</code>, <code>aggregate_stability.R</code></td><td class="num">consensus 7; runs 900 + r</td></tr>
+<tr><td>Secondary endpoint (Basal)</td><td><code>tcga-brca-basal-v3.R</code></td><td class="num">20260909</td></tr>
+<tr><td>Simulation cross-check</td><td><code>fusion_sim_extracted.R</code></td><td class="num">set inside the script</td></tr>
+</table>
+
+<p>The full table-by-table mapping, including which console log in <code>code/frozen_tcga/logs/</code> captures each run's output, is <a href="https://github.com/nepalanurag/thesis-findings/blob/main/code/frozen_tcga/MANIFEST.md">MANIFEST.md</a>. The per-run <code>.rds</code> objects and raw TCGA files are not committed; the summary CSVs and logs in <code>logs/</code> capture each run's reported numbers.</p>
+
+<h2>How to rerun it</h2>
+
+<p>The complete setup is documented in <a href="https://github.com/nepalanurag/thesis-findings/blob/main/REPRODUCE.md">REPRODUCE.md</a>. The short version: R (&ge; 4.3) with tidyverse, glmnet, grpreg, pROC, Matrix, patchwork, and SKAT; download the TCGA files (~410 MB) from cBioPortal with the committed <code>dl_rna.py</code> and <code>dl_clinical.py</code> scripts; then run the scripts in order, real, v3, five-arm, stability, basal, simulation. All seeds are fixed, so a rerun on the same data and package versions reproduces the runs bit-for-bit. The stability scripts are resumable: already-computed run/variant results are skipped on relaunch.</p>
+
+<div class="note">
+<strong>Archival code.</strong> The thesis-as-written scripts (<code>code/main.r</code>, <code>code/tcga_brca_multimodal_selection.R</code>) are kept with explicit archival headers for provenance. They are not part of the rerun pipeline; use <code>code/frozen_tcga/</code>. One comprehensive script, <code>tcga-brca-validation.R</code>, is committed for provenance with its table mapping still to be confirmed rather than guessed.
+</div>
+
+</div>
+</main>
+<footer class="site">
+  <div class="wrap">
+    Anurag Nepal &middot; SFSU, 2026 &middot; <a href="https://github.com/nepalanurag/thesis-findings">github.com/nepalanurag/thesis-findings</a>
+  </div>
+</footer>
+</body>
+</html>

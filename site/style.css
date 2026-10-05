@@ -134,6 +134,15 @@ tr.winner td { background: #eaf5f1; }
 
 ul.tight li { margin-bottom: 6px; }
 
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  background: #efece4;
+  border: 1px solid var(--line);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
 footer.site {
   border-top: 2px solid var(--ink);
   padding: 16px 0 40px;
