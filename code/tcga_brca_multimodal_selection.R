@@ -1,3 +1,10 @@
+# ARCHIVAL: superseded notebook-era version of the TCGA-BRCA analysis.
+# Converted from the older analysis notebook (vital_status endpoint,
+# resubstitution-style evaluation); replaced by the frozen validation
+# scripts in code/frozen_tcga/ that stand behind the REPORT.md results.
+# Kept as written for provenance. Do not use for new work;
+# see code/frozen_tcga/ (manifest: code/frozen_tcga/MANIFEST.md).
+
 # Multi-modal feature selection on TCGA-BRCA data with adaptive group lasso
 # (inverse-log p-value penalties). Converted from the TCGA-Selection analysis notebook.
 

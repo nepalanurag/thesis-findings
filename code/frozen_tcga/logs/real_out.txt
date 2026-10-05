@@ -1,0 +1,34 @@
+Failed to connect to bus: No such file or directory
+Warning message:
+In system("timedatectl", intern = TRUE) :
+  running command 'timedatectl' had status 1
+loading RNA... 
+RNA: 20531 genes x 1100 samples 
+Warning message:
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat <- vroom(...)
+  problems(dat) 
+ER IHC column: ER_STATUS_BY_IHC (patient-level) 
+primary-tumor samples, one per patient: 1093 
+ER+: 806  ER-: 237  unknown: 50 
+genes after QC: 20227 
+analysis matrix: 1043 samples x 1500 genes; ER+ rate 0.77 
+positive controls in universe: ESR1=TRUE PGR=TRUE FOXA1=TRUE GATA3=TRUE 
+genefu PAM50 failed: object 'pam50.robust' not found 
+Warning message:
+replacing previous import ‘limma::logsumexp’ by ‘mclust::logsumexp’ when loading ‘genefu’ 
+===== endpoint: ERpos_vs_ERneg_IHC ===== 
+train 730 (pos 564) | test 313 (pos 242) 
+Sample size (non-missing y and X) = 730, which is < 2000. The small sample adjustment is applied!
+selected 302 genes in 10.4 min 
+held-out test AUC: 0.974 
+   signature overlap sig_in_universe selected universe enrich     p
+1      PAM50       2              14      302     1500   0.71 0.807
+2 OncotypeDX       0               4      302     1500   0.00 1.000
+3 MammaPrint       1               7      302     1500   0.71 0.793
+mean pairwise Jaccard (stability): 0.533 
+DONE -> tcga_brca_real_results/ 
+Error: unexpected symbol in "_results.rds"
+Execution halted
+EXIT: 1

@@ -1,0 +1,76 @@
+loading RNA... 
+Warning message:
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat <- vroom(...)
+  problems(dat) 
+RNA: 1043 primary samples with ER labels 
+loading methylation... 
+METH: 16474 genes x 783 primary samples 
+overlap: 737 patients with RNA + METH + ER label 
+ER+ rate in overlap set: 0.771 
+[RNA] genes with >10% missing: 0 
+[RNA] final: 737 x 1500 
+[METH] genes with >10% missing: 0 
+[METH] final: 737 x 1500 
+universe genes: 2765; total features: 3000 
+train 516 (ER+ 0.77) | test 221 (ER+ 0.77) 
+[LASSO] sel=32 auc=0.943 jacc=0.266 (0.1 min) 
+[EF-Std] perms voting: 9/80 
+[EF-Std-stab1] perms voting: 1/30 
+[EF-Std-stab2] perms voting: 22/30 
+[EF-Std-stab3] perms voting: 1/30 
+[EF-Std] sel=0 auc=NA jacc=0.333 (4.6 min) 
+[EF-Std] controls: ESR1:0 PGR:0 FOXA1:0 GATA3:0 
+[EF-Adap] perms voting: 80/80 
+[EF-Adap-stab1] perms voting: 30/30 
+[EF-Adap-stab2] perms voting: 30/30 
+[EF-Adap-stab3] perms voting: 30/30 
+[EF-Adap] sel=137 auc=0.925 jacc=0.189 (6.0 min) 
+[EF-Adap] controls: ESR1:1 PGR:1 FOXA1:1 GATA3:1 
+[LF-Std-RNA] perms voting: 4/80 
+[LF-Std-RNA] sel=0 cv_auc=NA 
+[LF-Std-METH] perms voting: 80/80 
+[LF-Std-METH] sel=174 cv_auc=0.962 
+[LF-Std-stab1] perms voting: 23/30 
+[LF-Std-stab1] perms voting: 30/30 
+[LF-Std-stab2] perms voting: 2/30 
+[LF-Std-stab2] perms voting: 30/30 
+[LF-Std-stab3] perms voting: 5/30 
+[LF-Std-stab3] perms voting: 30/30 
+[LF-Std] union_sel=174 ens_auc=0.925 jacc=0.440 (4.2 min) 
+[LF-Std] controls: ESR1:1 PGR:0 FOXA1:0 GATA3:1 
+[LF-Adap-RNA] perms voting: 80/80 
+[LF-Adap-RNA] sel=196 cv_auc=0.961 
+[LF-Adap-METH] perms voting: 80/80 
+[LF-Adap-METH] sel=379 cv_auc=0.970 
+[LF-Adap-stab1] perms voting: 30/30 
+[LF-Adap-stab1] perms voting: 30/30 
+[LF-Adap-stab2] perms voting: 30/30 
+[LF-Adap-stab2] perms voting: 30/30 
+[LF-Adap-stab3] perms voting: 30/30 
+[LF-Adap-stab3] perms voting: 30/30 
+[LF-Adap] union_sel=575 ens_auc=0.937 jacc=0.301 (7.8 min) 
+[LF-Adap] controls: ESR1:1 PGR:0 FOXA1:1 GATA3:1 
+                  arm n_selected n_RNA n_METH heldout_AUC stability_Jaccard
+ov...1 Baseline LASSO         32    19     13       0.943             0.266
+ov...2         EF-Std          0     0      0          NA             0.333
+ov...3        EF-Adap        137   111     26       0.925             0.189
+ov...4         LF-Std        174     0    174       0.925             0.440
+ov...5        LF-Adap        575   196    379       0.937             0.301
+       PAM50_overlap  PAM50_p Oncotype_overlap Oncotype_p MammaPrint_overlap
+ov...1             2 0.006410                1   0.033900                  1
+ov...2             0 1.000000                0   1.000000                  0
+ov...3             4 0.004870                3   0.000594                  3
+ov...4             0 1.000000                0   1.000000                  0
+ov...5             7 0.000131                2   0.043300                  3
+               pos_controls
+ov...1                     
+ov...2                     
+ov...3 ESR1,PGR,FOXA1,GATA3
+ov...4           ESR1,GATA3
+ov...5     ESR1,FOXA1,GATA3
+5-ARM DONE 
+Error: unexpected symbol in "_overlap"
+Execution halted
+EXIT: 1

@@ -1,0 +1,18 @@
+Warning message:
+replacing previous import ‘limma::logsumexp’ by ‘mclust::logsumexp’ when loading ‘genefu’ 
+loading RNA... 
+computing PAM50 (genefu)... 
+pam50
+ Basal   Her2   LumA   LumB Normal 
+   198    110    432    317     36 
+Basal: 198 / 1093 (18.1%) 
+train 766 (basal 139) | test 327 (basal 59) 
+[basal] perms voting: 100/100 
+[basal-stab] perms voting: 50/50 
+[basal-stab] perms voting: 50/50 
+[basal-stab] perms voting: 50/50 
+basal: selected 164 genes (4.3 min); test AUC 0.994; Jaccard 0.731 
+basal marker ranks: KRT5:192 KRT14:188 KRT17:NA FOXC1:NA EGFR:119 
+PAM50 overlap: 3/14, enrich 1.96, p=0.19 
+BASAL V3 DONE 
+EXIT: 0

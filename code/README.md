@@ -29,3 +29,12 @@ Each analysis script above has a companion R Markdown notebook in this folder th
 - `adaptive_permutation_group_lasso.Rmd` - the simulation study comparing early/late fusion with standard and adaptive penalties against baseline lasso.
 - `tcga_brca_multimodal_selection.Rmd` - the TCGA-BRCA analysis: data loading, the three-way model comparison, and the subsample stability experiment.
 - `thesis_simulation_data.Rmd` - the survival simulation: data generator, then permutation-calibrated group lasso and lasso evaluated against the known causal features.
+
+## Frozen validation scripts
+
+`frozen_tcga/` holds the exact scripts that produced the real-data results
+in REPORT.md (five-arm benchmark, stability study, basal endpoint), frozen
+as run in September 2026, with a table-by-table manifest
+(`frozen_tcga/MANIFEST.md`) and rerun instructions (`REPRODUCE.md` at the
+repo root). `main.r` and `tcga_brca_multimodal_selection.R` are archival:
+thesis as-written, kept for provenance, not for new work.

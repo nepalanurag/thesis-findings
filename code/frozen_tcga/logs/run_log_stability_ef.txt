@@ -1,0 +1,55 @@
+loading data... 
+data: n=737, features=3000 
+computing consensus groups (full cohort)... 
+consensus groups done: 375 groups (2.7 min) 
+=== DIAGNOSTIC: within-split algorithmic jitter === 
+[DIAG-rep1] perms voting: 80/80 
+[DIAG-rep2] perms voting: 80/80 
+[DIAG-rep3] perms voting: 80/80 
+[DIAG] within-split pairwise Jaccard (3 reps): 1.000 
+[DIAG] rep sizes: 144,144,144 
+[run 1] ESR1-only AUC=0.932 four-gene AUC=0.934 
+[S1-run1] perms voting: 80/80 
+[S1 run 1] sel=263 auc=0.944 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (4.7 min) 
+[S2-run1] perms voting: 80/80 
+[S2 run 1] sel=263 auc=0.944 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (4.4 min) 
+[S3 run 1] sel=139 auc=0.942 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (13.9 min) 
+[run 2] ESR1-only AUC=0.948 four-gene AUC=0.948 
+[S1-run2] perms voting: 80/80 
+[S1 run 2] sel=171 auc=0.952 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (4.0 min) 
+[S2-run2] perms voting: 80/80 
+[S2 run 2] sel=169 auc=0.952 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (4.9 min) 
+[S3 run 2] sel=132 auc=0.952 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (12.9 min) 
+[run 3] ESR1-only AUC=0.950 four-gene AUC=0.933 
+[S1-run3] perms voting: 80/80 
+[S1 run 3] sel=211 auc=0.936 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (5.1 min) 
+[S2-run3] perms voting: 80/80 
+[S2 run 3] sel=211 auc=0.936 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (4.7 min) 
+[S3 run 3] sel=101 auc=0.957 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (12.5 min) 
+[run 4] ESR1-only AUC=0.950 four-gene AUC=0.946 
+[S1-run4] perms voting: 80/80 
+[S1 run 4] sel=185 auc=0.940 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (5.3 min) 
+[S2-run4] perms voting: 80/80 
+[S2 run 4] sel=185 auc=0.940 ctrls=ESR1:1 PGR:1 FOXA1:1 GATA3:1 (5.0 min) 
+resumed: already have diagnostic, run1, run2, run3 
+loading data... 
+data: n=737, features=3000 
+computing consensus groups (full cohort)... 
+consensus groups done: 375 groups (2.6 min) 
+diagnostic already done, skipping 
+[run 1] complete, skipping 
+[run 2] complete, skipping 
+[run 3] complete, skipping 
+[run 4] ESR1-only AUC=0.950 four-gene AUC=0.946 
+[S1-run4] perms voting: 80/80 
+[S1 run 4] sel=185 auc=0.940 (4.8 min) 
+[S2-run4] perms voting: 80/80 
+[S2 run 4] sel=185 auc=0.940 (4.7 min) 
+[S3 run 4] sel=106 auc=0.946 (13.6 min) 
+[run 5] ESR1-only AUC=0.940 four-gene AUC=0.934 
+[S1-run5] perms voting: 80/80 
+[S1 run 5] sel=203 auc=0.930 (4.2 min) 
+[S2-run5] perms voting: 80/80 
+[S2 run 5] sel=203 auc=0.930 (4.6 min) 
+[S3 run 5] sel=136 auc=0.945 (11.5 min) 
+STABILITY EF DONE 

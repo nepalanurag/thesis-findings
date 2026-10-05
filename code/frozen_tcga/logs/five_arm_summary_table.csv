@@ -1,0 +1,6 @@
+"arm","n_selected","heldout_AUC","stability_Jaccard","PAM50_overlap_med","PAM50_p_med","PAM50_sig_runs","Oncotype_overlap_med","Oncotype_p_med","Oncotype_sig_runs","controls_x_of_5"
+"Baseline LASSO","30 (12)","0.931 (0.017)","0.201",1,0.0816,"2/5",1,0.0339,"4/5","ESR1 5/5; PGR 0/5; FOXA1 0/5; GATA3 2/5"
+"EF-Std","23 (51)","0.899 (0.000)","0.600",0,1,"0/5",0,1,"0/5","ESR1 0/5; PGR 0/5; FOXA1 0/5; GATA3 0/5"
+"EF-Adap","236 (67)","0.930 (0.017)","0.229",4,0.00875,"5/5",2,0.0286,"4/5","ESR1 5/5; PGR 4/5; FOXA1 3/5; GATA3 3/5"
+"LF-Std","107 (47)","0.917 (0.018)","0.363",0,1,"0/5",0,1,"0/5","ESR1 1/5; PGR 0/5; FOXA1 0/5; GATA3 1/5"
+"LF-Adap","498 (148)","0.924 (0.015)","0.327",5,0.00583,"5/5",2,0.0864,"2/5","ESR1 5/5; PGR 1/5; FOXA1 5/5; GATA3 5/5"

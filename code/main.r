@@ -1,4 +1,11 @@
 
+# ARCHIVAL: thesis as written (May 2026). This script contains the SKAT-based
+# adaptive weighting issue documented in REPORT.md (SKAT is a rare-variant
+# test for genotype counts; on continuous expression it returns p = 1 or
+# crashes, so the "adaptive" arms effectively ran with size-only weights).
+# Do not use for new work. For the frozen scripts behind the reported
+# results, see code/frozen_tcga/ (manifest: code/frozen_tcga/MANIFEST.md).
+
 library(tidyverse)
 library(pheatmap)
 library(glmnet)

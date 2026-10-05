@@ -1,0 +1,172 @@
+=== START RUN 3 Fri Sep 11 23:05:04 PDT 2026 ===
+loading RNA... 
+Warning message:
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat <- vroom(...)
+  problems(dat) 
+RNA: 1043 primary samples with ER labels 
+loading methylation... 
+METH: 16474 genes x 783 primary samples 
+overlap: 737 patients with RNA + METH + ER label 
+ER+ rate in overlap set: 0.771 
+[RNA] genes with >10% missing: 0 
+[RNA] final: 737 x 1500 
+[METH] genes with >10% missing: 0 
+[METH] final: 737 x 1500 
+universe genes: 2765; total features: 3000 
+train 516 (ER+ 0.77) | test 221 (ER+ 0.77) 
+[LASSO] sel=24 auc=0.924 jacc=NA (0.0 min) 
+[EF-Std] perms voting: 66/80 
+[EF-Std] sel=115 auc=0.899 jacc=NA (1.2 min) 
+[EF-Std] controls: ESR1:0 PGR:0 FOXA1:0 GATA3:0 
+[EF-Adap] perms voting: 80/80 
+[EF-Adap] sel=262 auc=0.921 jacc=NA (1.7 min) 
+[EF-Adap] controls: ESR1:1 PGR:0 FOXA1:0 GATA3:0 
+[LF-Std-RNA] perms voting: 22/80 
+[LF-Std-RNA] sel=0 cv_auc=NA 
+[LF-Std-METH] perms voting: 80/80 
+[LF-Std-METH] sel=85 cv_auc=0.948 
+[LF-Std] union_sel=85 ens_auc=0.918 jacc=NA (1.6 min) 
+[LF-Std] controls: ESR1:0 PGR:0 FOXA1:0 GATA3:0 
+[LF-Adap-RNA] perms voting: 80/80 
+[LF-Adap-RNA] sel=172 cv_auc=0.974 
+[LF-Adap-METH] perms voting: 80/80 
+[LF-Adap-METH] sel=389 cv_auc=0.965 
+[LF-Adap] union_sel=561 ens_auc=0.925 jacc=NA (2.8 min) 
+[LF-Adap] controls: ESR1:1 PGR:0 FOXA1:1 GATA3:1 
+                  arm n_selected n_RNA n_METH heldout_AUC stability_Jaccard
+ov...1 Baseline LASSO         24    20      4       0.924                NA
+ov...2         EF-Std        115    31     84       0.899                NA
+ov...3        EF-Adap        262   212     50       0.921                NA
+ov...4         LF-Std         85     0     85       0.918                NA
+ov...5        LF-Adap        561   172    389       0.925                NA
+       PAM50_overlap PAM50_p Oncotype_overlap Oncotype_p MammaPrint_overlap
+ov...1             1  0.1230                1     0.0357                  1
+ov...2             0  1.0000                1     0.0549                  0
+ov...3             4  0.0438                2     0.0501                  4
+ov...4             0  1.0000                0     1.0000                  0
+ov...5             4  0.0222                1     0.2750                  2
+           pos_controls
+ov...1                 
+ov...2                 
+ov...3             ESR1
+ov...4                 
+ov...5 ESR1,FOXA1,GATA3
+5-ARM DONE 
+RUN 3 OK
+=== START RUN 4 Fri Sep 11 23:13:28 PDT 2026 ===
+loading RNA... 
+Warning message:
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat <- vroom(...)
+  problems(dat) 
+RNA: 1043 primary samples with ER labels 
+loading methylation... 
+METH: 16474 genes x 783 primary samples 
+overlap: 737 patients with RNA + METH + ER label 
+ER+ rate in overlap set: 0.771 
+[RNA] genes with >10% missing: 0 
+[RNA] final: 737 x 1500 
+[METH] genes with >10% missing: 0 
+[METH] final: 737 x 1500 
+universe genes: 2765; total features: 3000 
+train 516 (ER+ 0.77) | test 221 (ER+ 0.77) 
+[LASSO] sel=50 auc=0.911 jacc=NA (0.0 min) 
+[EF-Std] perms voting: 1/80 
+[EF-Std] sel=0 auc=NA jacc=NA (1.2 min) 
+[EF-Std] controls: ESR1:0 PGR:0 FOXA1:0 GATA3:0 
+[EF-Adap] perms voting: 80/80 
+[EF-Adap] sel=267 auc=0.917 jacc=NA (2.0 min) 
+[EF-Adap] controls: ESR1:1 PGR:1 FOXA1:1 GATA3:1 
+[LF-Std-RNA] perms voting: 24/80 
+[LF-Std-RNA] sel=0 cv_auc=NA 
+[LF-Std-METH] perms voting: 80/80 
+[LF-Std-METH] sel=48 cv_auc=0.957 
+[LF-Std] union_sel=48 ens_auc=0.905 jacc=NA (1.6 min) 
+[LF-Std] controls: ESR1:0 PGR:0 FOXA1:0 GATA3:0 
+[LF-Adap-RNA] perms voting: 80/80 
+[LF-Adap-RNA] sel=286 cv_auc=0.975 
+[LF-Adap-METH] perms voting: 80/80 
+[LF-Adap-METH] sel=383 cv_auc=0.983 
+[LF-Adap] union_sel=669 ens_auc=0.907 jacc=NA (2.7 min) 
+[LF-Adap] controls: ESR1:1 PGR:0 FOXA1:1 GATA3:1 
+                  arm n_selected n_RNA n_METH heldout_AUC stability_Jaccard
+ov...1 Baseline LASSO         50    32     18       0.911                NA
+ov...2         EF-Std          0     0      0          NA                NA
+ov...3        EF-Adap        267   171     96       0.917                NA
+ov...4         LF-Std         48     0     48       0.905                NA
+ov...5        LF-Adap        669   286    383       0.907                NA
+       PAM50_overlap PAM50_p Oncotype_overlap Oncotype_p MammaPrint_overlap
+ov...1             2 0.01770                1     0.0566                  1
+ov...2             0 1.00000                0     1.0000                  0
+ov...3             6 0.00051                2     0.0336                  0
+ov...4             0 1.00000                0     1.0000                  0
+ov...5             7 0.00137                2     0.0864                  6
+               pos_controls
+ov...1                     
+ov...2                     
+ov...3 ESR1,PGR,FOXA1,GATA3
+ov...4                     
+ov...5     ESR1,FOXA1,GATA3
+5-ARM DONE 
+RUN 4 OK
+=== START RUN 5 Fri Sep 11 23:21:46 PDT 2026 ===
+loading RNA... 
+Warning message:
+One or more parsing issues, call `problems()` on your data frame for details,
+e.g.:
+  dat <- vroom(...)
+  problems(dat) 
+RNA: 1043 primary samples with ER labels 
+loading methylation... 
+METH: 16474 genes x 783 primary samples 
+overlap: 737 patients with RNA + METH + ER label 
+ER+ rate in overlap set: 0.771 
+[RNA] genes with >10% missing: 0 
+[RNA] final: 737 x 1500 
+[METH] genes with >10% missing: 0 
+[METH] final: 737 x 1500 
+universe genes: 2765; total features: 3000 
+train 516 (ER+ 0.77) | test 221 (ER+ 0.77) 
+[LASSO] sel=26 auc=0.923 jacc=NA (0.0 min) 
+[EF-Std] perms voting: 8/80 
+[EF-Std] sel=0 auc=NA jacc=NA (1.2 min) 
+[EF-Std] controls: ESR1:0 PGR:0 FOXA1:0 GATA3:0 
+[EF-Adap] perms voting: 80/80 
+[EF-Adap] sel=310 auc=0.926 jacc=NA (2.0 min) 
+[EF-Adap] controls: ESR1:1 PGR:1 FOXA1:1 GATA3:1 
+[LF-Std-RNA] perms voting: 26/80 
+[LF-Std-RNA] sel=0 cv_auc=NA 
+[LF-Std-METH] perms voting: 80/80 
+[LF-Std-METH] sel=122 cv_auc=0.975 
+[LF-Std] union_sel=122 ens_auc=0.896 jacc=NA (1.7 min) 
+[LF-Std] controls: ESR1:0 PGR:0 FOXA1:0 GATA3:0 
+[LF-Adap-RNA] perms voting: 80/80 
+[LF-Adap-RNA] sel=195 cv_auc=0.974 
+[LF-Adap-METH] perms voting: 80/80 
+[LF-Adap-METH] sel=151 cv_auc=0.977 
+[LF-Adap] union_sel=346 ens_auc=0.911 jacc=NA (2.6 min) 
+[LF-Adap] controls: ESR1:1 PGR:1 FOXA1:1 GATA3:1 
+                  arm n_selected n_RNA n_METH heldout_AUC stability_Jaccard
+ov...1 Baseline LASSO         26    19      7       0.923                NA
+ov...2         EF-Std          0     0      0          NA                NA
+ov...3        EF-Adap        310   208    102       0.926                NA
+ov...4         LF-Std        122     0    122       0.896                NA
+ov...5        LF-Adap        346   195    151       0.911                NA
+       PAM50_overlap PAM50_p Oncotype_overlap Oncotype_p MammaPrint_overlap
+ov...1             1 0.11700                1    0.03390                  0
+ov...2             0 1.00000                0    1.00000                  0
+ov...3             5 0.00875                3    0.00375                  4
+ov...4             0 1.00000                0    1.00000                  0
+ov...5             5 0.00666                3    0.00311                  2
+               pos_controls
+ov...1                     
+ov...2                     
+ov...3 ESR1,PGR,FOXA1,GATA3
+ov...4                     
+ov...5 ESR1,PGR,FOXA1,GATA3
+5-ARM DONE 
+RUN 5 OK
+ALL DONE EXIT: 0
