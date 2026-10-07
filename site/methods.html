@@ -37,7 +37,7 @@
 
 <p>Two details matter:</p>
 <ul class="tight">
-  <li><strong>Lambda rule.</strong> Per permutation, pick the lambda that maximizes original discoveries subject to a false-discovery cap: (1 + number of controls selected) / max(1, number of originals selected) &le; 0.10. This is a knockoff-plus style rule, heuristic here, not a formal guarantee.</li>
+  <li><strong>Lambda rule.</strong> The thesis picked the lambda maximizing the difference between original and control discoveries (&lambda;* = argmax(#nonzero X &minus; #nonzero X&#771;)). In later fixes I replaced this with a false-discovery cap: (1 + number of controls selected) / max(1, number of originals selected) &le; 0.10. That is a knockoff-plus style rule, heuristic here, not a formal guarantee, and not what the thesis did.</li>
   <li><strong>Frequency cutoff.</strong> Repeat over permutations and keep features selected in at least half of them. The frequency is the selection statistic.</li>
 </ul>
 
