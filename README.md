@@ -18,6 +18,29 @@ When each patient is measured on thousands of gene expression and methylation fe
 - **Honest failure reported:** late-fusion adaptive S3 gained stability (Jaccard 0.588) but lost the positive controls in most splits. Stability alone must not pick the winner.
 - **A real bug found and fixed:** the thesis's SKAT-based adaptive weights were invalid for continuous expression data (SKAT is a rare-variant test for genotype counts; it silently returned p=1). Replaced with univariate Wald-z weights plus a false-discovery-rate targeted lambda rule. See REPORT.md.
 
+## Reproduce
+
+**Simulation.** `code/main.r` is the self-contained simulation engine behind
+the simulation numbers above. It builds multi-group feature sets with causal
+features, correlated decoys, and noise, draws a binary outcome from a logistic
+model, and runs the permutation-assisted group lasso against the row-permuted
+decoys. Needs R (>= 4.3) with tidyverse, glmnet, grpreg, pROC, SKAT, Matrix,
+doParallel, and foreach. The main loop is the slow part and uses all but one
+CPU core:
+
+```bash
+Rscript code/main.r
+```
+
+**TCGA-BRCA validation.** The exact scripts behind every table in REPORT.md
+are frozen in `code/frozen_tcga/`, with a table-by-table manifest in
+`code/frozen_tcga/MANIFEST.md`. `REPRODUCE.md` at the repo root documents the
+environment (R >= 4.3, CRAN + Bioconductor packages), how to download the raw
+TCGA files from cBioPortal (~410 MB, not committed), and the expected
+directory layout. `code/README.md` explains what each analysis script and
+notebook does; the thesis-era scripts are marked archival and kept for
+provenance, not for new work.
+
 ## The site
 
 `site/` is a hand-built static website (plain HTML/CSS, Plotly from CDN, no build step): key findings, background, methods, and an interactive TCGA-BRCA results page with the prediction-vs-reproducibility bubble plot and the 5-arm benchmark charts. Open `site/index.html` in a browser, or deploy `site/` to any static host (it is deployed on Vercel as anurag-thesis).
