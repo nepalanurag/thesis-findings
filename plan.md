@@ -29,7 +29,5 @@ The story: the method worked across 18 simulation scenarios in my thesis. On rea
 ## To do
 
 - [ ] Pull the methods text from the thesis
-- [ ] Confirm author list (me + Dr. He?)
 - [ ] Draw the workflow diagram
 - [ ] Write the discussion's biology interpretation
-- [ ] bioRxiv first, then BMC Bioinformatics or Bioinformatics Advances
