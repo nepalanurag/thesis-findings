@@ -4,7 +4,7 @@
 
 Methods paper. The contribution is the method: permutation-assisted adaptive group lasso with finite-sample FDR control, tested on real multi-omics data. TCGA-BRCA is the testbed, not the point.
 
-The story: the method worked across 18 simulation scenarios in my thesis. On real TCGA data the adaptive version was unstable across resamples. I figured out why and fixed it. Most papers skip that part. I'm keeping it.
+The story: the method worked across 18 simulation scenarios in my thesis. On real TCGA data the adaptive version was unstable across resamples. I figured out why and fixed it.
 
 ## Results I have
 
