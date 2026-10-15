@@ -1,0 +1,327 @@
+{
+  "selection_frequency": [
+    {
+      "gene": "AGR3",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "CYP2B7P",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "PGR",
+      "splits": 5,
+      "control": true
+    },
+    {
+      "gene": "SERPINA11",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "ESR1",
+      "splits": 5,
+      "control": true
+    },
+    {
+      "gene": "ERBB4",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "ZIC1",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "IL20",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "SLC7A2",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "SYTL5",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "FOXA1",
+      "splits": 5,
+      "control": true
+    },
+    {
+      "gene": "TMPRSS6",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "FSIP1",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "TPRG1",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "RGS22",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "HSD17B2",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "AFF3",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "CAPN13",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "DACH1",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "DNALI1",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "SOX11",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "RASAL1",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "CLSTN2",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "AFAP1-AS1",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "EN1",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "CA12",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "LONRF2",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "ABCA13",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "ACE2",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "FAM184B",
+      "splits": 5,
+      "control": false
+    },
+    {
+      "gene": "GATA3",
+      "splits": 5,
+      "control": true
+    }
+  ],
+  "enrichment": [
+    {
+      "arm": "Baseline LASSO",
+      "pam50_overlap": 1,
+      "pam50_p": 0.0816,
+      "pam50_sig": 2,
+      "onc_overlap": 1,
+      "onc_p": 0.0339,
+      "onc_sig": 4,
+      "pam50_logp": 1.0883,
+      "onc_logp": 1.4698
+    },
+    {
+      "arm": "EF-Std",
+      "pam50_overlap": 0,
+      "pam50_p": 1,
+      "pam50_sig": 0,
+      "onc_overlap": 0,
+      "onc_p": 1,
+      "onc_sig": 0,
+      "pam50_logp": -0,
+      "onc_logp": -0
+    },
+    {
+      "arm": "EF-Adap",
+      "pam50_overlap": 4,
+      "pam50_p": 0.0088,
+      "pam50_sig": 5,
+      "onc_overlap": 2,
+      "onc_p": 0.0286,
+      "onc_sig": 4,
+      "pam50_logp": 2.058,
+      "onc_logp": 1.5436
+    },
+    {
+      "arm": "LF-Std",
+      "pam50_overlap": 0,
+      "pam50_p": 1,
+      "pam50_sig": 0,
+      "onc_overlap": 0,
+      "onc_p": 1,
+      "onc_sig": 0,
+      "pam50_logp": -0,
+      "onc_logp": -0
+    },
+    {
+      "arm": "LF-Adap",
+      "pam50_overlap": 5,
+      "pam50_p": 0.0058,
+      "pam50_sig": 5,
+      "onc_overlap": 2,
+      "onc_p": 0.0864,
+      "onc_sig": 2,
+      "pam50_logp": 2.2343,
+      "onc_logp": 1.0635
+    }
+  ],
+  "auc_strip": [
+    {
+      "arm": "Baseline LASSO",
+      "split": 1,
+      "auc": 0.9431
+    },
+    {
+      "arm": "EF-Adap",
+      "split": 1,
+      "auc": 0.9248
+    },
+    {
+      "arm": "LF-Std",
+      "split": 1,
+      "auc": 0.925
+    },
+    {
+      "arm": "LF-Adap",
+      "split": 1,
+      "auc": 0.9367
+    },
+    {
+      "arm": "Baseline LASSO",
+      "split": 2,
+      "auc": 0.9528
+    },
+    {
+      "arm": "EF-Adap",
+      "split": 2,
+      "auc": 0.9593
+    },
+    {
+      "arm": "LF-Std",
+      "split": 2,
+      "auc": 0.9414
+    },
+    {
+      "arm": "LF-Adap",
+      "split": 2,
+      "auc": 0.9413
+    },
+    {
+      "arm": "Baseline LASSO",
+      "split": 3,
+      "auc": 0.9241
+    },
+    {
+      "arm": "EF-Std",
+      "split": 3,
+      "auc": 0.8993
+    },
+    {
+      "arm": "EF-Adap",
+      "split": 3,
+      "auc": 0.9212
+    },
+    {
+      "arm": "LF-Std",
+      "split": 3,
+      "auc": 0.9183
+    },
+    {
+      "arm": "LF-Adap",
+      "split": 3,
+      "auc": 0.9251
+    },
+    {
+      "arm": "Baseline LASSO",
+      "split": 4,
+      "auc": 0.9113
+    },
+    {
+      "arm": "EF-Adap",
+      "split": 4,
+      "auc": 0.9171
+    },
+    {
+      "arm": "LF-Std",
+      "split": 4,
+      "auc": 0.9053
+    },
+    {
+      "arm": "LF-Adap",
+      "split": 4,
+      "auc": 0.9069
+    },
+    {
+      "arm": "Baseline LASSO",
+      "split": 5,
+      "auc": 0.9228
+    },
+    {
+      "arm": "EF-Adap",
+      "split": 5,
+      "auc": 0.9258
+    },
+    {
+      "arm": "LF-Std",
+      "split": 5,
+      "auc": 0.8963
+    },
+    {
+      "arm": "LF-Adap",
+      "split": 5,
+      "auc": 0.9113
+    }
+  ],
+  "meta": {
+    "n_splits": 5,
+    "s3_note": "EF-Adap S3: stability selection on EF-Adap; top 30 genes by selection frequency across 5 fresh train/test splits"
+  }
+}
